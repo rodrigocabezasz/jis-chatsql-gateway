@@ -9,6 +9,15 @@ Param(
 
 $ErrorActionPreference = "Stop"
 
+# Resolve repository root no matter where the script is executed from.
+$repoRoot = Split-Path -Parent $PSScriptRoot
+
+# Prefer project virtual environment if present.
+$pythonExe = Join-Path $repoRoot ".venv\Scripts\python.exe"
+if (-not (Test-Path $pythonExe)) {
+    $pythonExe = "python"
+}
+
 $env:DB_HOST = $DbHost
 $env:DB_PORT = "$DbPort"
 $env:DB_NAME = $DbName
@@ -19,5 +28,11 @@ $env:SQL_TIMEOUT_MS = "15000"
 $env:SQL_AUDIT_FILE = "./logs/jis_chatsql_audit.jsonl"
 $env:SQL_REQUIRE_ALLOWLIST = "false"
 
-python -m pip install -r requirements.txt
-python -m uvicorn src.app:app --host 127.0.0.1 --port $ApiPort
+Push-Location $repoRoot
+try {
+    & $pythonExe -m pip install -r (Join-Path $repoRoot "requirements.txt")
+    & $pythonExe -m uvicorn src.app:app --host 127.0.0.1 --port $ApiPort
+}
+finally {
+    Pop-Location
+}
