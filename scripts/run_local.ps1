@@ -15,7 +15,13 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 # Prefer project virtual environment if present.
 $pythonExe = Join-Path $repoRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $pythonExe)) {
-    $pythonExe = "python"
+    $workspaceVenv = Join-Path (Split-Path -Parent $repoRoot) ".venv\Scripts\python.exe"
+    if (Test-Path $workspaceVenv) {
+        $pythonExe = $workspaceVenv
+    }
+    else {
+        $pythonExe = "python"
+    }
 }
 
 $env:DB_HOST = $DbHost
