@@ -1,0 +1,20 @@
+services:
+  jis-chatsql-sql-gateway:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: jis-chatsql-sql-gateway
+    network_mode: host
+    environment:
+      DB_HOST: ${JISCHATSQL_DB_HOST:-127.0.0.1}
+      DB_PORT: ${JISCHATSQL_DB_PORT:-3306}
+      DB_NAME: ${JISCHATSQL_DB_NAME:-jisparking}
+      DB_USER: ${JISCHATSQL_DB_USER:-reader_user}
+      DB_PASSWORD: ${JISCHATSQL_DB_PASSWORD:-}
+      SQL_MAX_ROWS: ${JISCHATSQL_SQL_MAX_ROWS:-200}
+      SQL_TIMEOUT_MS: ${JISCHATSQL_SQL_TIMEOUT_MS:-15000}
+      SQL_AUDIT_FILE: ${JISCHATSQL_SQL_AUDIT_FILE:-/tmp/jis_chatsql_audit.jsonl}
+      ALLOWED_TABLES: ${JISCHATSQL_ALLOWED_TABLES:-}
+      ALLOWED_VIEWS: ${JISCHATSQL_ALLOWED_VIEWS:-}
+      SQL_REQUIRE_ALLOWLIST: ${JISCHATSQL_REQUIRE_ALLOWLIST:-false}
+    restart: unless-stopped
